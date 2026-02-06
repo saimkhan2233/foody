@@ -1,0 +1,125 @@
+/* The Grid Container */
+body{
+    background: linear-gradient(to right, #280905, #740A03, #C3110C, #E6501B);
+}
+#users {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+    gap: 25px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* The Square Card */
+.user-card {
+    background: #ffffff;
+    aspect-ratio: 1 / 1; /* Forces the box to be a perfect square */
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Keeps info at top, button at bottom */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    border: 1px solid #eee;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.user-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+}
+
+/* Time/Date Stamp Styling */
+.reg-time {
+    font-size: 0.75rem;
+    color: black;
+    margin-bottom: 10px;
+    display: block;
+    /* display: none; */
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+p span{
+    color: black;
+}
+.vendor-name {
+    font-size: 1.7rem;
+    font-weight: 700;
+    margin: 5px 0;
+    color: #880000;
+    font-family: sans-serif;
+}
+
+.vendor-email {
+    font-size: 1.2rem;
+    color: #880000;
+    word-break: break-all;
+    font-family: sans-serif;
+}
+
+.status-label {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 0.7rem;
+    padding: 5px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+}
+/* Styling for the Pending Label */
+.pending-text {
+    background-color: #ffcc00; /* Yellow/Orange */
+    color: #000000;
+    font-weight: bold;
+    font-family: sans-serif;
+}
+
+/* Styling for the Verified Label */
+.verified-text {
+    background-color: #28a745; /* Green */
+    color: #ffffff;
+    font-weight: bold;
+    font-family: sans-serif;
+}
+
+/* Styling for the Verify Button */
+.btn-verify {
+    background-color: #28a745 !important;
+    color: white !important;
+    border: #28a745 2px solid;
+    border-radius: 12px;
+    height: 35px;
+    font-size: 12px;
+    cursor: pointer;
+
+}
+
+/* Styling for the Unverify (Revoke) Button */
+.btn-unverify {
+    background-color: #880000 !important;
+    color: white !important;
+        border: #880000 2px solid;
+    border-radius: 12px;
+    height: 35px;
+    font-size: 12px;
+    cursor: pointer;
+
+}
+h1{
+    color: white;
+      font-family: "Titillium Web", sans-serif;
+      font-size: 3.2rem;
+      display: flex;
+      justify-content: center;
+
+}
+.loading-msg {
+    grid-column: 1 / -1; /* Makes it take the full width of the grid */
+    text-align: center;
+    color: white;
+    font-family: sans-serif;
+    margin-top: 50px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
