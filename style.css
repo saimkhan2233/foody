@@ -1,0 +1,281 @@
+:root {
+    --primary-red: #880000;
+    --accent-red: #aa0000;
+    --light-red: #FA5C5C;
+    --bg-main: #FFF9F2;
+    --bg-alt: #F4F4F4;
+    --card-bg: #ffffff;
+    --text-main: #333333;
+    --text-muted: #666666;
+}
+
+body.dark-mode {
+    --bg-main: #121212;
+    --bg-alt: #1a1a1a;
+    --card-bg: #252525;
+    --text-main: #ffffff;
+    --text-muted: #bbbbbb;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    transition: all 0.4s ease;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1050; /* Keeps it above the floating hero images and marquee */
+    background-color: var(--bg-main);
+    padding: 15px 0;
+    transition: 0.4s;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05); /* Adds definition when scrolling */
+}
+
+/* Ensures the bottom border looks good in Dark Mode */
+body.dark-mode .navbar {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navbar-brand {
+    font-size: 30px;
+    color: var(--primary-red) !important;
+    font-family: "Fondamento", cursive;
+    font-weight: 700;
+    padding-left: 20px;
+}
+
+.nav-link {
+    font-size: 18px;
+    color: var(--text-main) !important;
+    font-weight: 500;
+    margin: 0 15px;
+    padding: 5px 0 !important;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: var(--primary-red);
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--primary-red) !important;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+.hero-section {
+    padding: 40px 0 100px 0;
+    background-color: var(--bg-main);
+}
+
+.hero-btndiv {
+    margin-bottom: 25px;
+}
+
+.hero-btn {
+    border: 1px solid var(--light-red);
+    background: transparent;
+    border-radius: 30px;
+    color: var(--light-red);
+    padding: 8px 22px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.main-heading-web h1 {
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 40px;
+    color: var(--text-main);
+}
+
+.btn-explore-market {
+    display: inline-block;
+    width: 78%;
+    padding: 16px 0;
+    background: var(--accent-red);
+    color: white !important;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: 0.3s;
+    box-shadow: 0 10px 20px rgba(136, 0, 0, 0.3);
+}
+
+.btn-explore-market:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(136, 0, 0, 0.5);
+}
+
+.hero-img img {
+    max-width: 90%;
+    animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+.second-hero-section {
+    background-color: var(--bg-alt);
+    padding: 80px 0;
+}
+
+.section-heading {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+.service-card {
+    border: none;
+    border-radius: 30px;
+    background: var(--card-bg) !important;
+    transition: 0.4s ease;
+    padding: 40px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.service-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+}
+
+.card-icon-wrapper {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 20px;
+}
+
+.card-icon-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+body.dark-mode .card-icon-wrapper img {
+    filter: invert(1) brightness(2);
+}
+
+.third-hero-section {
+    padding: 80px 0;
+    background-color: var(--bg-main);
+    overflow: hidden;
+    width: 100%;
+}
+
+.marquee-track {
+    display: flex;
+    width: max-content; 
+    animation: scroll 40s linear infinite;
+}
+
+.marquee-track:hover {
+    animation-play-state: paused;
+}
+
+.marquee-group {
+    display: flex;
+    gap: 30px;
+    padding-right: 30px;
+}
+
+.food-card {
+    width: 22rem;
+    border: none;
+    border-radius: 20px;
+    background-color: var(--card-bg) !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    flex-shrink: 0;
+    transition: 0.4s ease;
+    overflow: hidden;
+}
+
+.food-card:hover {
+    transform: scale(1.03);
+}
+
+.food-card img {
+    height: 250px;
+    width: 100%;
+    object-fit: cover;
+}
+
+.food-card .card-body {
+    padding: 25px;
+    background-color: var(--card-bg) !important;
+}
+
+.food-title {
+    color: var(--primary-red);
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+}
+
+body.dark-mode .food-title {
+    color: #ffffff !important;
+}
+
+.card-text {
+    color: var(--text-muted) !important;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+@keyframes scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(calc(-100% / 3)); }
+}
+
+.login-btns {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.login-btns button:not(.btn-theme) {
+    padding: 10px 24px;
+    border: none;
+    background: var(--primary-red);
+    color: white;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.btn-theme {
+    background: transparent;
+    border: 2px solid var(--primary-red);
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    cursor: pointer;
+}
+
+@media (max-width: 991px) {
+    .hero-section { text-align: center; padding-top: 20px;}
+    .btn-explore-market { width: 100%; }
+    .login-btns { justify-content: center; margin-top: 20px;}
+}
