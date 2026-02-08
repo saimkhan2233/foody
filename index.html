@@ -12,28 +12,29 @@
 
 <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
-        <a class="navbar-brand" href="javascript:void(0);">FOODY</a>
+        <a class="navbar-brand" href="index.html">FOODY</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <div class="navbar-nav mx-auto">
-                <a class="nav-link" href="javascript:void(0);">Home</a>
-                <a class="nav-link" href="javascript:void(0);">Vendors</a>
-                <a class="nav-link" href="javascript:void(0);">Explore</a>
-                <a class="nav-link" href="javascript:void(0);">Contact</a>
+                <a class="nav-link" href="#home">Home</a>
+                <a class="nav-link" href="market.html">Vendors</a>
+                <a class="nav-link" href="#explore">Explore</a>
+                <a class="nav-link" href="#contact">Contact</a>
             </div>
-            <div class="login-btns">
+            <div class="login-btns" id="auth-buttons">
                 <button id="theme-toggle" class="btn-theme">
                     <span id="theme-icon">🌙</span>
                 </button>
-                <button class="btn-signup">SignUp</button>
-                <button class="btn-login">LogIn</button>
+                <a href="SignUp/signup.html"><button class="btn-signup">SignUp</button></a>
+                <a href="Login/login.html"><button class="btn-login">LogIn</button></a>
             </div>
         </div> 
     </div>
 </nav>
-<section class="hero-section">
+
+<section id="home" class="hero-section">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6">
@@ -44,7 +45,7 @@
                     <h1>Hot Meals, <br> Quick Bites & <br> Memorable Flavor</h1>
                 </div>
                 <div class="explore-market-div">
-                    <a href="javascript:void(0);" class="btn-explore-market">Explore Vendor Market</a>
+                    <a href="SignUp/signup.html" id="main-explore-btn" class="btn-explore-market">Explore Vendor Market</a>
                 </div>
             </div>
             <div class="col-lg-6 d-flex justify-content-end">
@@ -56,14 +57,13 @@
     </div>
 </section>
 
-<div class="second-hero-section">
+<div id="vendors" class="second-hero-section">
     <div class="container">
         <div class="row text-center mb-5">
             <div class="col-12">
                 <h2 class="section-heading">How We Serve You</h2>
             </div>
         </div>
-        
         <div class="row justify-content-center g-4">
             <div class="col-md-5">
                 <div class="card service-card h-100">
@@ -90,7 +90,8 @@
         </div>
     </div>
 </div>
-<div class="third-hero-section">
+
+<div id="explore" class="third-hero-section">
     <div class="marquee-container">
         <div class="marquee-track">
             <div class="marquee-group">
@@ -139,34 +140,67 @@
                     </div>
                 </div>
             </div>
-            <div class="marquee-group">
-                <div class="card food-card">
-                    <img src="Crack Burgers_ Your New Go-To Burger.jpg" class="card-img-top">
-                    <div class="card-body">
-                        <h5 class="food-title">Burgers</h5>
-                        <p class="card-text">Juicy grilled patties with fresh veggies and secret sauce.</p>
-                    </div>
-                </div>
-                <div class="card food-card">
-                    <img src="download.jpg" class="card-img-top">
-                    <div class="card-body">
-                        <h5 class="food-title">Cheesy Pizza</h5>
-                        <p class="card-text">Hand-tossed dough topped with premium melted mozzarella.</p>
-                    </div>
-                </div>
-                <div class="card food-card">
-                    <img src="Pasta 🍲🍲.jpg" class="card-img-top">
-                    <div class="card-body">
-                        <h5 class="food-title">Italian Pasta</h5>
-                        <p class="card-text">Al dente pasta tossed in rich, creamy traditional sauces.</p>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>
 
+<footer id="contact" class="footer-section">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <ul class="footer-list">
+                    <li><a href="javascript:void(0);">Press</a></li>
+                    <li><a href="javascript:void(0);">FOODY Terms</a></li>
+                    <li><a href="javascript:void(0);">Security</a></li>
+                    <li><a href="javascript:void(0);">Careers</a></li>
+                    <li><a href="javascript:void(0);">Cashback</a></li>
+                    <li><a href="javascript:void(0);">Partner with Us</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <ul class="footer-list">
+                    <li><a href="javascript:void(0);">Help Center</a></li>
+                    <li><a href="javascript:void(0);">Terms and Conditions</a></li>
+                    <li><a href="javascript:void(0);">Download FOODY Apps</a></li>
+                    <li><a href="javascript:void(0);">Suggest a Restaurant</a></li>
+                    <li><a href="javascript:void(0);">All cuisines</a></li>
+                    <li><a href="javascript:void(0);">FOODY-go Rider</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <ul class="footer-list">
+                    <li><a href="javascript:void(0);">Refunds with FOODYpay</a></li>
+                    <li><a href="javascript:void(0);">Privacy policy</a></li>
+                    <li><a href="javascript:void(0);">Human rights policy</a></li>
+                    <li><a href="javascript:void(0);">Corporate Customer</a></li>
+                    <li><a href="javascript:void(0);">FOODY Magazine</a></li>
+                    <li><a href="javascript:void(0);">Vouchers & Coupons</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-4 col-md-12">
+                <h5 class="footer-heading">Contact for any query</h5>
+                <div class="footer-contact-wrapper">
+                    <div class="input-group input-group-lg custom-input-group">
+                        <input type="text" class="form-control footer-input" placeholder="Type your message here..." aria-label="Query">
+                        <button class="btn btn-footer-send" type="button">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr class="footer-divider">
+        <div class="footer-bottom d-flex justify-content-between align-items-center flex-wrap">
+            <div class="footer-brand">
+                <span class="navbar-brand footer-logo">FOODY</span>
+            </div>
+            <div class="social-icons">
+                <a href="javascript:void(0);"><i class="fab fa-instagram"></i></a>
+                <a href="javascript:void(0);"><i class="fab fa-facebook-f"></i></a>
+            </div>
+        </div>
+    </div>
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="app.js"></script>
+<script type="module" src="app.js"></script>
 </body>
 </html>

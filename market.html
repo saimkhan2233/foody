@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spot | Market</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="market.css">
+</head>
+<body>
+
+    <nav class="glass-header">
+        <div class="logo-area">
+            <span class="logo-dot"></span>
+            <h1>Market</h1>
+        </div>
+        <div class="header-actions">
+            <div id="role-actions"></div>
+            <button id="theme-toggle" class="theme-btn">
+                <span id="theme-icon">☀️</span>
+            </button>
+            <button id="logout-btn" class="logout-pill">Logout</button>
+        </div>
+    </nav>
+
+    <main class="content-wrapper">
+        <div class="market-grid" id="food-container"></div>
+    </main>
+
+    <div id="floating-cart" class="cart-pill" style="display: none;">
+        <span>🛒</span>
+        <span>Cart</span>
+        <span id="cart-count">(0)</span>
+    </div>
+
+    <script type="module" src="market.js"></script>
+</body>
+</html>

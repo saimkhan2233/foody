@@ -1,125 +1,256 @@
-/* The Grid Container */
-body{
-    background: linear-gradient(to right, #280905, #740A03, #C3110C, #E6501B);
-}
-#users {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-    gap: 25px;
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
+:root {
+    --primary: #C3110C;
+    --primary-hover: #880000;
+    --bg: #F5F7F9;
+    --header-bg: rgba(255, 255, 255, 0.8);
+    --card-bg: #ffffff;
+    --text-main: #1a1a1a;
+    --text-dim: #64748b;
+    --border: rgba(0, 0, 0, 0.08);
+    --glass: rgba(255, 255, 255, 0.5);
+    --body-bg-image: none;
 }
 
-/* The Square Card */
-.user-card {
-    background: #ffffff;
-    aspect-ratio: 1 / 1; /* Forces the box to be a perfect square */
-    border-radius: 15px;
-    padding: 20px;
+body.dark-mode {
+    --bg: #0f0f0f;
+    --header-bg: rgba(255, 255, 255, 0.03);
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --text-main: #ffffff;
+    --text-dim: #a0a0a0;
+    --border: rgba(255, 255, 255, 0.08);
+    --glass: rgba(255, 255, 255, 0.03);
+    --body-bg-image: radial-gradient(circle at top left, #280905, #0f0f0f 50%);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg);
+    background-image: var(--body-bg-image);
+    background-attachment: fixed;
+    color: var(--text-main);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: background 0.3s ease;
+}
+
+.glass-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 5%;
+    background: var(--header-bg);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-dot {
+    width: 12px;
+    height: 12px;
+    background: var(--primary);
+    border-radius: 50%;
+    box-shadow: 0 0 15px var(--primary);
+}
+
+.glass-header h1 {
+    font-size: 1.5rem;
+    margin: 0;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+}
+
+.queue-pill {
+    background: var(--glass);
+    color: var(--text-main);
+    border: 1px solid var(--border);
+    padding: 10px 22px;
+    border-radius: 100px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-right: 10px;
+    transition: 0.3s;
+    font-family: inherit;
+}
+
+.queue-pill:hover {
+    background: var(--card-bg);
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 40px 5% 20px;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Keeps info at top, button at bottom */
-    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-    border: 1px solid #eee;
-    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}
+
+.stat-label {
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-top: 5px;
+}
+
+.pending .stat-value {
+    color: #f59e0b;
+}
+
+.verified .stat-value {
+    color: #28a745;
+}
+
+#users {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+    padding: 20px 5%;
+}
+
+.user-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(5px);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     position: relative;
-    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.02);
 }
 
 .user-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    border-color: var(--primary);
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.06);
 }
 
-/* Time/Date Stamp Styling */
 .reg-time {
     font-size: 0.75rem;
-    color: black;
-    margin-bottom: 10px;
-    display: block;
-    /* display: none; */
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: var(--text-dim);
+    margin-bottom: 20px;
 }
-p span{
-    color: black;
-}
+
 .vendor-name {
-    font-size: 1.7rem;
-    font-weight: 700;
-    margin: 5px 0;
-    color: #880000;
-    font-family: sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin: 0 0 8px 0;
+    color: var(--text-main);
 }
 
 .vendor-email {
-    font-size: 1.2rem;
-    color: #880000;
+    font-size: 0.95rem;
+    color: var(--text-dim);
+    margin-bottom: 25px;
     word-break: break-all;
-    font-family: sans-serif;
 }
 
 .status-label {
-    display: inline-block;
-    margin-top: 10px;
+    align-self: flex-start;
+    padding: 6px 14px;
+    border-radius: 100px;
     font-size: 0.7rem;
-    padding: 5px 10px;
-    border-radius: 20px;
-    letter-spacing: 0.5px;
+    font-weight: 800;
+    margin-bottom: 30px;
 }
-/* Styling for the Pending Label */
+
 .pending-text {
-    background-color: #ffcc00; /* Yellow/Orange */
-    color: #000000;
-    font-weight: bold;
-    font-family: sans-serif;
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    border: 1px solid #f59e0b;
 }
 
-/* Styling for the Verified Label */
 .verified-text {
-    background-color: #28a745; /* Green */
-    color: #ffffff;
-    font-weight: bold;
-    font-family: sans-serif;
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+    border: 1px solid #28a745;
 }
 
-/* Styling for the Verify Button */
-.btn-verify {
-    background-color: #28a745 !important;
-    color: white !important;
-    border: #28a745 2px solid;
-    border-radius: 12px;
-    height: 35px;
-    font-size: 12px;
-    cursor: pointer;
-
-}
-
-/* Styling for the Unverify (Revoke) Button */
+.btn-verify, 
 .btn-unverify {
-    background-color: #880000 !important;
-    color: white !important;
-        border: #880000 2px solid;
-    border-radius: 12px;
-    height: 35px;
-    font-size: 12px;
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    border: none;
+    font-weight: 700;
     cursor: pointer;
-
+    transition: 0.3s;
+    margin-top: auto;
 }
-h1{
-    color: white;
-      font-family: "Titillium Web", sans-serif;
-      font-size: 3.2rem;
-      display: flex;
-      justify-content: center;
 
-}
-.loading-msg {
-    grid-column: 1 / -1; /* Makes it take the full width of the grid */
-    text-align: center;
+.btn-verify {
+    background: #28a745;
     color: white;
-    font-family: sans-serif;
-    margin-top: 50px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
+}
+
+.btn-verify:hover {
+    background: #218838;
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+}
+
+.btn-unverify {
+    background: rgba(195, 17, 12, 0.1);
+    color: var(--primary);
+    border: 1px solid var(--primary);
+}
+
+.btn-unverify:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.theme-btn {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: 0.3s;
+}
+
+.logout-pill {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 100px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.logout-pill:hover {
+    background: var(--primary-hover);
 }

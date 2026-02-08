@@ -1,0 +1,40 @@
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spot | Verification Queue</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="admin.css"> </head>
+<body>
+
+    <div class="dashboard-container">
+        <header class="glass-header">
+            <div class="logo-area">
+                <span class="logo-dot"></span>
+                <h1>Verification Queue</h1>
+            </div>
+            <div class="header-actions">
+                <a href="admin.html" class="queue-pill" style="text-decoration: none;">Vendor Management</a>
+                <button id="theme-toggle" class="theme-btn">
+                    <span id="theme-icon">☀️</span>
+                </button>
+            </div>
+        </header>
+
+        <main class="content-wrapper">
+            <div class="stats-grid">
+                <div class="stat-card pending">
+                    <span class="stat-label">Items Waiting</span>
+                    <span id="queue-count" class="stat-value">--</span>
+                </div>
+            </div>
+
+            <div id="food-list-container"></div>
+        </main>
+    </div>
+
+    <script type="module" src="adminVerify.js"></script>
+</body>
+</html>

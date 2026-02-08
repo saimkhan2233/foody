@@ -1,66 +1,84 @@
-import { auth } from "../Config/config.js";
-import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { auth, database } from "../Config/config.js";
+import { onAuthStateChanged, signOut, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// 1. Target the button ID from your HTML
-const loginBtn = document.getElementById("login-btn");
+const handleLogin = async (email, password) => {
+    try {
+        const res = await signInWithEmailAndPassword(auth, email, password);
+        const userDoc = await getDoc(doc(database, "users", res.user.uid));
+        const userData = userDoc.data();
 
-if (loginBtn) {
-    loginBtn.addEventListener('click', async () => {
-        // 2. Target the specific IDs for Email and Password
-        const emailInput = document.getElementById("useremail");
-        const passInput = document.getElementById("userpassword");
-
-        // 3. Prevent the "null" error if IDs are missing in HTML
-        if (!emailInput || !passInput) {
-            console.error("Missing HTML IDs! Ensure email is 'useremail' and password is 'userpassword'.");
+        if (userData.role === "vendor" && !userData.isVerified) {
+            await signOut(auth);
+            Swal.fire("Access Pending", "Please wait for Admin approval.", "warning");
             return;
         }
 
-        const email = emailInput.value.trim();
-        const pass = passInput.value.trim();
+        window.location.href = userData.role === "admin" ? "../admin/admin.html" : "../index.html";
+    } catch (error) {
+        Swal.fire("Login Failed", error.message, "error");
+    }
+};
 
-        // 4. Basic validation before calling Firebase
-        if (!email || !pass) {
-            Swal.fire("Empty Fields", "Please enter both email and password.", "warning");
-            return;
+onAuthStateChanged(auth, async (user) => {
+    const authButtons = document.getElementById('auth-buttons');
+    const mainExploreBtn = document.getElementById('main-explore-btn');
+
+    if (user) {
+        if (authButtons) {
+            authButtons.innerHTML = '';
+
+            const themeBtn = document.createElement('button');
+            themeBtn.id = 'theme-toggle';
+            themeBtn.className = 'btn-theme';
+            themeBtn.innerHTML = '<span id="theme-icon">🌙</span>';
+
+            const marketLink = document.createElement('a');
+            marketLink.href = '../market.html';
+            const marketBtn = document.createElement('button');
+            marketBtn.className = 'btn-signup';
+            marketBtn.textContent = 'Go to Market';
+            marketLink.appendChild(marketBtn);
+
+            const logoutBtn = document.createElement('button');
+            logoutBtn.id = 'nav-logout';
+            logoutBtn.className = 'btn-login';
+            logoutBtn.textContent = 'Log Out';
+
+            authButtons.appendChild(themeBtn);
+            authButtons.appendChild(marketLink);
+            authButtons.appendChild(logoutBtn);
+
+            logoutBtn.addEventListener('click', () => {
+                signOut(auth).then(() => window.location.reload());
+            });
         }
 
-        try {
-            // 5. Attempt login with the password 'pakistan'
-            const res = await signInWithEmailAndPassword(auth, email, pass);
-            const user = res.user;
-
-            // 6. ADMIN REDIRECT LOGIC
-            // If the email matches your hardcoded admin, send to dashboard
-            if (user.email === "admin@gmail.com") {
-                Swal.fire({
-                    title: "Welcome Admin",
-                    text: "Accessing Spot Dashboard...",
-                    icon: "success",
-                    timer: 1500,
-                    showConfirmButton: false
-                }).then(() => {
-                    // Check if your folder name is 'admin' or 'Admin'
-                    window.location.href = "../admin/admin.html"; 
-                });
-            } else {
-                // 7. REGULAR USER REDIRECT
-                window.location.href = "../index.html";
-            }
-
-        } catch (error) {
-            // Handle specific Firebase errors from your screenshots
-            console.error("Firebase Error Code:", error.code);
-            
-            if (error.code === 'auth/invalid-email') {
-                Swal.fire("Error", "The email format is incorrect.", "error");
-            } else if (error.code === 'auth/invalid-credential') {
-                Swal.fire("Login Failed", "Incorrect email or password (pakistan).", "error");
-            } else {
-                Swal.fire("Error", error.message, "error");
-            }
+        if (mainExploreBtn) {
+            mainExploreBtn.innerText = "Visit Market Now";
+            mainExploreBtn.href = "../market.html";
         }
-    });
-} else {
-    console.error("The button with ID 'login-btn' was not found!");
-}   
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const icon = document.getElementById('theme-icon');
+            if (icon) icon.textContent = body.classList.contains('dark-mode') ? '☀️' : '🌙';
+        });
+    }
+
+    const loginBtn = document.getElementById("login-btn");
+    if (loginBtn) {
+        loginBtn.addEventListener('click', () => {
+            const email = document.getElementById("login-email").value;
+            const password = document.getElementById("login-password").value;
+            handleLogin(email, password);
+        });
+    }
+});

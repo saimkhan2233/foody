@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foody | Vendor Studio</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="vendor.css">
+</head>
+<body>
+
+    <nav class="vendor-nav">
+        <div class="nav-content">
+            <div class="logo">FOODY</div>
+            <div class="nav-right">
+                <!-- <a href="admin.html" class="admin-link-btn">🛡️ Verification Queue</a> -->
+                <button id="theme-toggle" class="theme-btn">🌙 Dark Mode</button>
+                <button id="logout-btn" class="logout-btn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="studio-container">
+        <section class="column-left">
+            <div class="panel-header">
+                <h1>Food Studio</h1>
+                <p>Status: <span class="status-text">Pending Admin Approval</span></p>
+            </div>
+
+            <form id="food-form" class="professional-form">
+                <div class="input-section">
+                    <label>Dish Name</label>
+                    <input type="text" id="food-name" placeholder="e.g. Signature Beef Burger" required>
+                </div>
+
+                <div class="input-section">
+                    <label>Upload Food Image</label>
+                    <div class="upload-container">
+                        <input type="file" id="food-file" accept="image/*" required>
+                        <div class="upload-content">
+                            <div class="icon">📸</div>
+                            <p><strong>Click anywhere here</strong> to upload</p>
+                            <span class="file-hint">Select a photo from your computer</span>
+                        </div>
+                    </div>
+                    <input type="hidden" id="final-img-url">
+                </div>
+
+                <div class="grid-row">
+                    <div class="input-section">
+                        <label>Price ($)</label>
+                        <input type="number" id="food-price" step="0.01" placeholder="0.00" required>
+                    </div>
+                    <div class="input-section">
+                        <label>Category</label>
+                        <select id="food-cat">
+                            <option value="Fast Food">Fast Food</option>
+                            <option value="Main Course">Main Course</option>
+                            <option value="Desserts">Desserts</option>
+                            <option value="Beverages">Beverages</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-section">
+                    <label>Detailed Description</label>
+                    <textarea id="food-desc" rows="3" placeholder="Describe the taste..."></textarea>
+                </div>
+
+                <button type="submit" class="primary-btn" id="submit-btn">Submit for Verification</button>
+            </form>
+        </section>
+
+        <section class="column-right">
+            <div class="sticky-wrapper">
+                <span class="preview-tag">Customer View Preview</span>
+                <div class="card-preview">
+                    <div class="card-img">
+                        <div class="pending-badge">PENDING</div>
+                        <img id="prev-img" src="https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=1000&auto=format&fit=crop" alt="Food Preview">
+                    </div>
+                    <div class="card-body">
+                        <div class="card-header" style="padding: 0 20px;">
+                            <h2 id="prev-name">Dish Name</h2>
+                            <span class="card-price">$<span id="prev-price">0.00</span></span>
+                        </div>
+                        <p id="prev-desc" style="padding: 0 20px;">Description will appear here...</p>
+                        <div class="card-footer" style="padding: 20px;">
+                            <span id="prev-cat" class="cat-tag">Category</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="vendor.js"></script>
+</body>
+</html>

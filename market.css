@@ -1,0 +1,223 @@
+:root {
+    --primary: #C3110C;
+    --primary-hover: #880000;
+    --bg: #F5F7F9;
+    --card-bg: #ffffff;
+    --text-main: #1a1a1a;
+    --text-dim: #64748b;
+    --border: rgba(0, 0, 0, 0.08);
+    --glass: rgba(255, 255, 255, 0.7);
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+body.dark-mode {
+    --bg: #0f0f0f;
+    --card-bg: #1a1a1a;
+    --text-main: #ffffff;
+    --text-dim: #a0a0a0;
+    --border: rgba(255, 255, 255, 0.1);
+    --glass: rgba(0, 0, 0, 0.4);
+    --shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+
+body {
+    margin: 0;
+    background-color: var(--bg);
+    color: var(--text-main);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: background 0.4s ease, color 0.4s ease;
+}
+
+.glass-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 5%;
+    background: var(--glass);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-dot {
+    width: 10px;
+    height: 10px;
+    background: var(--primary);
+    border-radius: 50%;
+    box-shadow: 0 0 15px var(--primary);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.theme-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.theme-btn:hover {
+    transform: rotate(15deg) scale(1.1);
+}
+
+.logout-pill {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    padding: 10px 22px;
+    border-radius: 100px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.logout-pill:hover {
+    background: #ef4444;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+}
+
+.publish-btn {
+    background: var(--primary);
+    color: white;
+    padding: 10px 25px;
+    border-radius: 100px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: 0.3s;
+}
+
+.market-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+    padding: 40px 5%;
+}
+
+.food-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 12px;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    box-shadow: var(--shadow);
+}
+
+.food-card:hover {
+    transform: translateY(-12px);
+    border-color: var(--primary);
+}
+
+.img-box {
+    width: 100%;
+    height: 220px;
+    border-radius: 22px;
+    overflow: hidden;
+    position: relative;
+}
+
+.img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: 0.6s;
+}
+
+.food-card:hover .img-box img {
+    transform: scale(1.1);
+}
+
+.price-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: var(--primary);
+    color: white;
+    padding: 8px 18px;
+    border-radius: 100px;
+    font-weight: 800;
+}
+
+.card-content {
+    padding: 15px 5px;
+}
+
+.vendor-info {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--primary);
+    text-transform: uppercase;
+}
+
+.cart-pill {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--text-main);
+    color: var(--card-bg);
+    padding: 18px 35px;
+    border-radius: 100px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: 0.3s;
+}
+.card-content p {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    margin: 10px 0;
+}
+
+.food-card .publish-btn {
+    margin-top: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+#floating-cart {
+    transition: transform 0.3s ease;
+}
+
+#floating-cart:hover {
+    transform: scale(1.05);
+}
+.no-data-msg {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 50px;
+    color: var(--text-dim);
+    font-size: 1.2rem;
+}
+
+.food-desc-text {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin: 10px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}

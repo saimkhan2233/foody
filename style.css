@@ -21,6 +21,11 @@ html {
     scroll-behavior: smooth;
 }
 
+/* Added for navigation offset */
+section, .second-hero-section, .third-hero-section, footer {
+    scroll-margin-top: 80px;
+}
+
 body {
     background-color: var(--bg-main);
     color: var(--text-main);
@@ -32,14 +37,13 @@ body {
 .navbar {
     position: sticky;
     top: 0;
-    z-index: 1050; /* Keeps it above the floating hero images and marquee */
+    z-index: 1050; 
     background-color: var(--bg-main);
     padding: 15px 0;
     transition: 0.4s;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05); /* Adds definition when scrolling */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-/* Ensures the bottom border looks good in Dark Mode */
 body.dark-mode .navbar {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -278,4 +282,164 @@ body.dark-mode .food-title {
     .hero-section { text-align: center; padding-top: 20px;}
     .btn-explore-market { width: 100%; }
     .login-btns { justify-content: center; margin-top: 20px;}
+}
+:root {
+    --primary-red: #880000;
+    --bg-main: #FFF9F2;
+    --footer-bg: #FFF9F2;
+    --footer-text: #333333;
+    --footer-border: #e5e5e5;
+    --logo-footer: #880000;
+}
+
+body.dark-mode {
+    --footer-bg: #880000;
+    --footer-text: #ffffff;
+    --footer-border: rgba(255, 255, 255, 0.2);
+    --logo-footer: #ffffff;
+}
+
+.footer-section {
+    padding: 80px 0 40px 0;
+    background-color: var(--footer-bg);
+    color: var(--footer-text);
+    border-top: 1px solid var(--footer-border);
+    transition: all 0.4s ease;
+}
+
+.footer-heading {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+.footer-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-list li {
+    margin-bottom: 12px;
+}
+
+.footer-list a {
+    text-decoration: none;
+    color: var(--footer-text);
+    font-size: 1rem;
+    opacity: 0.85;
+    transition: 0.3s ease;
+}
+
+.footer-list a:hover {
+    opacity: 1;
+    padding-left: 10px;
+}
+
+.footer-contact-wrapper {
+    width: 100%;
+}
+
+.custom-input-group {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px !important;
+    border: 2px solid var(--footer-border);
+    overflow: hidden;
+    transition: 0.3s;
+}
+
+.custom-input-group:focus-within {
+    border-color: var(--footer-text);
+}
+
+.footer-input {
+    background: transparent !important;
+    border: none !important;
+    color: var(--footer-text) !important;
+    font-size: 1.1rem !important;
+    padding: 15px 20px !important;
+    box-shadow: none !important;
+}
+
+.footer-input::placeholder {
+    color: var(--footer-text);
+    opacity: 0.6;
+}
+
+.btn-footer-send {
+    background: var(--footer-text) !important;
+    color: var(--footer-bg) !important;
+    border: none !important;
+    font-weight: 700 !important;
+    padding: 0 30px !important;
+    text-transform: uppercase;
+    transition: 0.3s;
+}
+
+.btn-footer-send:hover {
+    filter: brightness(1.2);
+}
+
+.footer-divider {
+    margin: 50px 0 30px 0;
+    border-color: var(--footer-border);
+    opacity: 0.4;
+}
+
+.footer-logo {
+    color: var(--logo-footer) !important;
+    font-size: 28px;
+    font-family: "Fondamento", cursive;
+    transition: color 0.4s ease;
+}
+
+.social-icons a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    border: 1px solid var(--footer-border);
+    border-radius: 50%;
+    color: var(--footer-text);
+    margin-left: 15px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.social-icons a:hover {
+    background: var(--footer-text);
+    color: var(--footer-bg);
+}
+
+@media (max-width: 991px) {
+    .footer-section { text-align: center; }
+    .footer-contact-wrapper { margin-top: 20px; }
+    .footer-list { margin-bottom: 20px; }
+    .social-icons { margin-top: 20px; width: 100%; justify-content: center; }
+}
+#nav-logout {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-weight: 700;
+    transition: 0.3s;
+}
+
+#nav-logout:hover {
+    background: #dc2626;
+    transform: scale(1.05);
+}
+
+.login-btns {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+body.dark-mode {
+    background-color: #121212;
+    color: white;
 }
