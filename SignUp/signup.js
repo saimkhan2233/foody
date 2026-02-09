@@ -1,10 +1,14 @@
 import { database, auth } from "../Config/config.js";
-import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { 
+    createUserWithEmailAndPassword, 
+    GoogleAuthProvider, 
+    signInWithPopup 
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const signupBtn = document.getElementById("signup-btn");
+const googleSignupBtn = document.getElementById("google-login-btn");
 
-// Safety Check: Only run if the button is actually found
 if (signupBtn) {
     signupBtn.addEventListener('click', async () => {
         const role = document.getElementById("userrole").value; 
@@ -12,15 +16,19 @@ if (signupBtn) {
         const pass = document.getElementById("userpassword").value;
         const name = document.getElementById("username").value;
 
+        if (!role || !email || !pass || !name) {
+            Swal.fire("Error", "Please fill all fields", "error");
+            return;
+        }
+
         try {
             const res = await createUserWithEmailAndPassword(auth, email, pass);
-            
             await setDoc(doc(database, "users", res.user.uid), {
                 fullname: name,
                 useremail: email,
                 role: role,
                 isVerified: (role === "customer"),
-                timestamp: new Date().toLocaleString() // This fixes your "Date Unknown" issue
+                timestamp: new Date().toLocaleString()
             });
 
             Swal.fire("Success", "Account created! Please login.", "success").then(() => {
@@ -30,7 +38,39 @@ if (signupBtn) {
             Swal.fire("Error", error.message, "error");
         }
     });
-} else {
-    // This will tell you exactly what's wrong in the console
-    console.error("Critical Error: 'signup-btn' not found in HTML. Check your ID or Script position.");
+}
+
+if (googleSignupBtn) {
+    googleSignupBtn.addEventListener('click', async () => {
+        const role = document.getElementById("userrole").value;
+        
+        if (!role) {
+            Swal.fire("Role Required", "Please select a role before signing up with Google.", "info");
+            return;
+        }
+
+        const provider = new GoogleAuthProvider();
+        try {
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+            const userRef = doc(database, "users", user.uid);
+            const userDoc = await getDoc(userRef);
+
+            if (!userDoc.exists()) {
+                await setDoc(userRef, {
+                    fullname: user.displayName,
+                    useremail: user.email,
+                    role: role,
+                    isVerified: (role === "customer"),
+                    timestamp: new Date().toLocaleString()
+                });
+            }
+
+            Swal.fire("Success", "Signed up with Google!", "success").then(() => {
+                window.location.href = "../index.html";
+            });
+        } catch (error) {
+            Swal.fire("Google Error", error.message, "error");
+        }
+    });
 }

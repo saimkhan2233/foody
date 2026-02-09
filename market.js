@@ -1,32 +1,31 @@
 import { auth, database } from "./Config/config.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { doc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-let userRole = null;
 let currentUserEmail = null;
+let cartCount = 0;
 
 onAuthStateChanged(auth, async (user) => {
     const roleActions = document.getElementById('role-actions');
     const logoutBtn = document.getElementById('logout-btn');
-    const cartPill = document.getElementById('floating-cart');
+    const floatingCart = document.getElementById('floating-cart');
     
     if (user) {
         currentUserEmail = user.email;
-        try {
-            const userDoc = await getDoc(doc(database, "users", user.uid));
-            userRole = userDoc.data()?.role;
-
-            if (cartPill) cartPill.style.display = (userRole === "customer") ? "flex" : "none";
-
-            if (userRole === "vendor" && roleActions) {
-                const pubLink = document.createElement('a');
-                pubLink.href = "vendor.html";
-                pubLink.className = "publish-btn";
-                pubLink.textContent = "Publish Product";
-                roleActions.innerHTML = "";
-                roleActions.appendChild(pubLink);
+        const userDoc = await getDoc(doc(database, "users", user.uid));
+        
+        if (userDoc.exists()) {
+            const userData = userDoc.data();
+            
+            if (userData.role === "vendor" && roleActions) {
+                roleActions.innerHTML = '<a href="vendor.html" class="publish-btn">Publish Product</a>';
             }
-        } catch (e) { console.error(e); }
+
+            if (userData.role === "customer" && floatingCart) {
+                floatingCart.style.display = "flex";
+            }
+        }
+        if (logoutBtn) logoutBtn.style.display = "block";
     }
     loadMarket();
 });
@@ -34,91 +33,121 @@ onAuthStateChanged(auth, async (user) => {
 async function loadMarket() {
     const container = document.getElementById('food-container');
     if (!container) return;
-    container.innerHTML = "";
+    container.innerHTML = "<p class='no-data-msg'>Loading delicious items...</p>";
 
     try {
-        const q = query(collection(database, "pending_food"), where("status", "==", "verified"));
-        const querySnapshot = await getDocs(q);
+        const querySnapshot = await getDocs(collection(database, "pending_food"));
+        container.innerHTML = ""; 
 
         if (querySnapshot.empty) {
-            const emptyMsg = document.createElement('div');
-            emptyMsg.className = "no-data-msg";
-            emptyMsg.textContent = "No verified items found.";
-            container.appendChild(emptyMsg);
+            container.innerHTML = "<p class='no-data-msg'>No items available right now.</p>";
             return;
         }
 
-        querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            const isOwner = currentUserEmail === data.vendorEmail;
+        querySnapshot.forEach((item) => {
+            const data = item.data();
+            if (data.status === "verified" || data.status === "pending") {
+                const isOwner = (currentUserEmail === data.vendorEmail);
+                const card = document.createElement('div');
+                card.className = "food-card";
 
-            const card = document.createElement('div');
-            card.className = "food-card";
+                const imgBox = document.createElement('div');
+                imgBox.className = "img-box";
 
-            const imgBox = document.createElement('div');
-            imgBox.className = "img-box";
-            
-            const img = document.createElement('img');
-            img.src = data.image;
-            
-            const price = document.createElement('span');
-            price.className = "price-badge";
-            price.textContent = `$${data.price}`;
-            
-            imgBox.append(img, price);
+                const img = document.createElement('img');
+                const cloudUrl = data.image; 
 
-            const content = document.createElement('div');
-            content.className = "card-content";
-            
-            const vendor = document.createElement('span');
-            vendor.className = "vendor-info";
-            vendor.textContent = data.category;
+                if (cloudUrl && cloudUrl !== "undefined") {
+                    img.src = cloudUrl;
+                } else {
+                    img.style.display = 'none';
+                    imgBox.innerHTML = `<div style="height:100%; display:flex; align-items:center; justify-content:center; color:var(--text-dim); font-weight:bold;">${data.name}</div>`;
+                }
+                
+                img.onerror = function() {
+                    this.style.display = 'none';
+                    imgBox.innerHTML = `<div style="height:100%; display:flex; align-items:center; justify-content:center; color:var(--text-dim); font-weight:bold;">Image Error</div>`;
+                };
 
-            const title = document.createElement('h3');
-            title.textContent = data.name;
+                const priceBadge = document.createElement('span');
+                priceBadge.className = "price-badge";
+                priceBadge.textContent = `$${data.price || '0'}`;
+                
+                imgBox.appendChild(img);
+                imgBox.appendChild(priceBadge);
 
-            const desc = document.createElement('p');
-            desc.className = "food-desc-text";
-            desc.textContent = data.description;
+                const content = document.createElement('div');
+                content.className = "card-content";
+                content.innerHTML = `
+                    <span class="vendor-info">${data.category || 'Food'}</span>
+                    <h3 style="margin:8px 0;">${data.name}</h3>
+                    <p class="food-desc-text">${data.description || 'No description provided.'}</p>
+                `;
 
-            const btn = document.createElement('button');
-            btn.className = "publish-btn";
-            btn.style.width = "100%";
-            btn.style.marginTop = "10px";
-            
-            if (isOwner) {
-                btn.textContent = "Edit Dish";
-                btn.style.background = "#007bff";
-                btn.onclick = () => window.location.href = `vendor.html?edit=${doc.id}`;
-            } else {
-                btn.textContent = "Add to Cart";
-                btn.onclick = () => addToCart(doc.id, data.name, data.price);
+                const btnGroup = document.createElement('div');
+                btnGroup.style.cssText = "display:flex; flex-direction:column; gap:8px;";
+
+                if (isOwner) {
+                    const editBtn = document.createElement('button');
+                    editBtn.className = "publish-btn";
+                    editBtn.style.background = "#007bff";
+                    editBtn.textContent = "Edit Dish";
+                    editBtn.onclick = () => window.location.href = `vendor.html?edit=${item.id}`;
+
+                    const delBtn = document.createElement('button');
+                    delBtn.className = "publish-btn";
+                    delBtn.style.background = "#dc3545";
+                    delBtn.textContent = "Delete Dish";
+                    delBtn.onclick = () => deleteDish(item.id, data.name);
+                    btnGroup.append(editBtn, delBtn);
+                } else {
+                    const addBtn = document.createElement('button');
+                    addBtn.className = "publish-btn";
+                    addBtn.textContent = "Add to Cart";
+                    
+                    addBtn.onclick = () => {
+                        const countSpan = document.getElementById('cart-count');
+                        if (countSpan) {
+                            cartCount++;
+                            countSpan.innerText = `(${cartCount})`;
+                            Swal.fire({
+                                title: 'Added!',
+                                text: `${data.name} is in your cart`,
+                                icon: 'success',
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
+                        }
+                    };
+                    btnGroup.append(addBtn);
+                }
+
+                card.append(imgBox, content, btnGroup);
+                container.appendChild(card);
             }
-
-            content.append(vendor, title, desc, btn);
-            card.append(imgBox, content);
-            container.appendChild(card);
         });
     } catch (err) {
-        console.error("Market Load Error:", err);
+        console.error("Market error:", err);
     }
 }
 
-function addToCart(id, name, price) {
-    if (userRole !== "customer") {
-        Swal.fire("Error", "Login as a customer to add items", "error");
-        return;
+async function deleteDish(id, name) {
+    if (confirm(`Delete ${name}?`)) {
+        try {
+            await deleteDoc(doc(database, "pending_food", id));
+            location.reload();
+        } catch (e) { alert("Delete failed"); }
     }
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    cart.push({ id, name, price });
-    localStorage.setItem('cart', JSON.stringify(cart));
-    
-    const countEl = document.getElementById('cart-count');
-    if (countEl) countEl.textContent = `(${cart.length})`;
-    
-    Swal.fire("Success", `${name} added to cart`, "success");
 }
+
+document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    const icon = document.getElementById('theme-icon');
+    icon.innerText = document.body.classList.contains('dark-mode') ? "🌙" : "☀️";
+});
 
 document.getElementById('logout-btn')?.addEventListener('click', () => {
-    signOut(auth).then(() => location.reload());
+    signOut(auth).then(() => location.href = "index.html");
 });
