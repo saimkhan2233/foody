@@ -14,15 +14,14 @@ const handleLogin = async (email, password) => {
         const userDoc = await getDoc(doc(database, "users", res.user.uid));
         
         if (!userDoc.exists()) {
-            Swal.fire("Error", "User record not found.", "error");
-            return;
+            return Swal.fire("Error", "User record not found.", "error");
         }
 
         const userData = userDoc.data();
+
         if (userData.role === "vendor" && !userData.isVerified) {
             await signOut(auth);
-            Swal.fire("Access Pending", "Please wait for Admin approval.", "warning");
-            return;
+            return Swal.fire("Access Pending", "Please wait for Admin approval.", "warning");
         }
 
         window.location.href = userData.role === "admin" ? "../admin/admin.html" : "../index.html";
@@ -35,13 +34,12 @@ const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();
     try {
         const result = await signInWithPopup(auth, provider);
-        const user = result.user;
-        const userRef = doc(database, "users", user.uid);
+        const userRef = doc(database, "users", result.user.uid);
         const userDoc = await getDoc(userRef);
 
         if (!userDoc.exists()) {
             await setDoc(userRef, {
-                email: user.email,
+                email: result.user.email,
                 role: "customer",
                 isVerified: true
             });
@@ -59,47 +57,37 @@ onAuthStateChanged(auth, async (user) => {
     const authButtons = document.getElementById('auth-buttons');
     const mainExploreBtn = document.getElementById('main-explore-btn');
 
-    if (user) {
-        if (authButtons) {
-            authButtons.innerHTML = '';
-            const marketLink = document.createElement('a');
-            marketLink.href = '../market.html';
-            const marketBtn = document.createElement('button');
-            marketBtn.className = 'btn-signup';
-            marketBtn.textContent = 'Go to Market';
-            marketLink.appendChild(marketBtn);
+    if (user && authButtons) {
+        authButtons.innerHTML = '';
 
-            const logoutBtn = document.createElement('button');
-            logoutBtn.id = 'nav-logout';
-            logoutBtn.className = 'btn-login';
-            logoutBtn.textContent = 'Log Out';
+        const marketLink = document.createElement('a');
+        marketLink.href = '../market.html';
+        
+        const marketBtn = document.createElement('button');
+        marketBtn.className = 'btn-signup';
+        marketBtn.textContent = 'Go to Market';
+        marketLink.appendChild(marketBtn);
 
-            authButtons.appendChild(marketLink);
-            authButtons.appendChild(logoutBtn);
+        const logoutBtn = document.createElement('button');
+        logoutBtn.className = 'btn-login';
+        logoutBtn.textContent = 'Log Out';
+        logoutBtn.onclick = () => signOut(auth).then(() => window.location.reload());
 
-            logoutBtn.addEventListener('click', () => {
-                signOut(auth).then(() => window.location.reload());
-            });
-        }
-        if (mainExploreBtn) {
-            mainExploreBtn.innerText = "Visit Market Now";
-            mainExploreBtn.href = "../market.html";
-        }
+        authButtons.append(marketLink, logoutBtn);
+    }
+
+    if (user && mainExploreBtn) {
+        mainExploreBtn.innerText = "Visit Market Now";
+        mainExploreBtn.href = "../market.html";
     }
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    const loginBtn = document.getElementById("login-btn");
-    if (loginBtn) {
-        loginBtn.addEventListener('click', () => {
-            const email = document.getElementById("login-email").value;
-            const password = document.getElementById("login-password").value;
-            if (email && password) handleLogin(email, password);
-        });
-    }
+    document.getElementById("login-btn")?.addEventListener('click', () => {
+        const email = document.getElementById("login-email").value;
+        const pass = document.getElementById("login-password").value;
+        if (email && pass) handleLogin(email, pass);
+    });
 
-    const googleBtn = document.getElementById("google-login-btn");
-    if (googleBtn) {
-        googleBtn.addEventListener('click', handleGoogleLogin);
-    }
+    document.getElementById("google-login-btn")?.addEventListener('click', handleGoogleLogin);
 });

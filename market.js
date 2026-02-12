@@ -5,27 +5,37 @@ import { doc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic
 let currentUserEmail = null;
 let cartCount = 0;
 
+// THEME TOGGLE LOGIC ONLY
+document.addEventListener('DOMContentLoaded', () => {
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const body = document.body;
+
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            if (themeIcon) {
+                themeIcon.textContent = body.classList.contains('dark-mode') ? '☀️' : '🌙';
+            }
+        });
+    }
+});
+
 onAuthStateChanged(auth, async (user) => {
-    const roleActions = document.getElementById('role-actions');
-    const logoutBtn = document.getElementById('logout-btn');
-    const floatingCart = document.getElementById('floating-cart');
-    
     if (user) {
         currentUserEmail = user.email;
         const userDoc = await getDoc(doc(database, "users", user.uid));
-        
         if (userDoc.exists()) {
             const userData = userDoc.data();
-            
-            if (userData.role === "vendor" && roleActions) {
-                roleActions.innerHTML = '<a href="vendor.html" class="publish-btn">Publish Product</a>';
+            const ra = document.getElementById('role-actions');
+            if (userData.role === "vendor" && ra) {
+                ra.innerHTML = '<a href="vendor.html" class="publish-btn">Publish Product</a>';
             }
-
-            if (userData.role === "customer" && floatingCart) {
-                floatingCart.style.display = "flex";
-            }
+            const fc = document.getElementById('floating-cart');
+            if (userData.role === "customer" && fc) fc.style.display = "flex";
         }
-        if (logoutBtn) logoutBtn.style.display = "block";
+        const lb = document.getElementById('logout-btn');
+        if (lb) lb.style.display = "block";
     }
     loadMarket();
 });
@@ -33,121 +43,88 @@ onAuthStateChanged(auth, async (user) => {
 async function loadMarket() {
     const container = document.getElementById('food-container');
     if (!container) return;
-    container.innerHTML = "<p class='no-data-msg'>Loading delicious items...</p>";
 
     try {
         const querySnapshot = await getDocs(collection(database, "pending_food"));
         container.innerHTML = ""; 
 
-        if (querySnapshot.empty) {
-            container.innerHTML = "<p class='no-data-msg'>No items available right now.</p>";
-            return;
-        }
-
         querySnapshot.forEach((item) => {
             const data = item.data();
-            if (data.status === "verified" || data.status === "pending") {
-                const isOwner = (currentUserEmail === data.vendorEmail);
-                const card = document.createElement('div');
-                card.className = "food-card";
+            const isOwner = (currentUserEmail === data.vendorEmail);
+            const card = document.createElement('div');
+            card.className = "food-card";
 
-                const imgBox = document.createElement('div');
-                imgBox.className = "img-box";
+            const imgBox = document.createElement('div');
+            imgBox.className = "img-box";
+            imgBox.style.height = "220px";
+            imgBox.style.width = "100%";
+            imgBox.style.overflow = "hidden";
+            imgBox.style.position = "relative";
 
-                const img = document.createElement('img');
-                const cloudUrl = data.image; 
+            const img = document.createElement('img');
+            img.src = data.image;
+            img.alt = data.name;
+            img.style.width = "100%";
+            img.style.height = "100%";
+            img.style.objectFit = "cover";
+            img.style.display = "block";
 
-                if (cloudUrl && cloudUrl !== "undefined") {
-                    img.src = cloudUrl;
-                } else {
-                    img.style.display = 'none';
-                    imgBox.innerHTML = `<div style="height:100%; display:flex; align-items:center; justify-content:center; color:var(--text-dim); font-weight:bold;">${data.name}</div>`;
-                }
-                
-                img.onerror = function() {
-                    this.style.display = 'none';
-                    imgBox.innerHTML = `<div style="height:100%; display:flex; align-items:center; justify-content:center; color:var(--text-dim); font-weight:bold;">Image Error</div>`;
-                };
+            const priceBadge = document.createElement('span');
+            priceBadge.className = "price-badge";
+            priceBadge.textContent = `$${data.price || '0'}`;
+            
+            imgBox.append(img, priceBadge);
 
-                const priceBadge = document.createElement('span');
-                priceBadge.className = "price-badge";
-                priceBadge.textContent = `$${data.price || '0'}`;
-                
-                imgBox.appendChild(img);
-                imgBox.appendChild(priceBadge);
+            const content = document.createElement('div');
+            content.className = "card-content";
+            content.innerHTML = `
+                <span class="vendor-info" style="color: #d32f2f; font-weight: bold; text-transform: uppercase; font-size: 12px;">${data.category || 'Fast Food'}</span>
+                <h3 style="margin: 10px 0 5px 0; font-size: 20px;">${data.name}</h3>
+                <p style="color: #666; font-size: 14px; margin-bottom: 15px;">${data.description || ''}</p>
+            `;
 
-                const content = document.createElement('div');
-                content.className = "card-content";
-                content.innerHTML = `
-                    <span class="vendor-info">${data.category || 'Food'}</span>
-                    <h3 style="margin:8px 0;">${data.name}</h3>
-                    <p class="food-desc-text">${data.description || 'No description provided.'}</p>
+            const btnGroup = document.createElement('div');
+            btnGroup.className = "btn-group-column";
+            btnGroup.style.display = "flex";
+            btnGroup.style.flexDirection = "column";
+            btnGroup.style.gap = "10px";
+
+            if (isOwner) {
+                btnGroup.innerHTML = `
+                    <button class="publish-btn" style="background:#007bff; border:none; cursor:pointer;" onclick="location.href='vendor.html?edit=${item.id}'">Edit Dish</button>
+                    <button class="publish-btn" style="background:#dc3545; border:none; cursor:pointer;" onclick="deleteDish('${item.id}', '${data.name}')">Delete Dish</button>
                 `;
-
-                const btnGroup = document.createElement('div');
-                btnGroup.style.cssText = "display:flex; flex-direction:column; gap:8px;";
-
-                if (isOwner) {
-                    const editBtn = document.createElement('button');
-                    editBtn.className = "publish-btn";
-                    editBtn.style.background = "#007bff";
-                    editBtn.textContent = "Edit Dish";
-                    editBtn.onclick = () => window.location.href = `vendor.html?edit=${item.id}`;
-
-                    const delBtn = document.createElement('button');
-                    delBtn.className = "publish-btn";
-                    delBtn.style.background = "#dc3545";
-                    delBtn.textContent = "Delete Dish";
-                    delBtn.onclick = () => deleteDish(item.id, data.name);
-                    btnGroup.append(editBtn, delBtn);
-                } else {
-                    const addBtn = document.createElement('button');
-                    addBtn.className = "publish-btn";
-                    addBtn.textContent = "Add to Cart";
-                    
-                    addBtn.onclick = () => {
-                        const countSpan = document.getElementById('cart-count');
-                        if (countSpan) {
-                            cartCount++;
-                            countSpan.innerText = `(${cartCount})`;
-                            Swal.fire({
-                                title: 'Added!',
-                                text: `${data.name} is in your cart`,
-                                icon: 'success',
-                                toast: true,
-                                position: 'top-end',
-                                showConfirmButton: false,
-                                timer: 2000
-                            });
-                        }
-                    };
-                    btnGroup.append(addBtn);
-                }
-
-                card.append(imgBox, content, btnGroup);
-                container.appendChild(card);
+            } else {
+                const addBtn = document.createElement('button');
+                addBtn.className = "publish-btn";
+                addBtn.style.width = "100%";
+                addBtn.textContent = "Add to Cart";
+                addBtn.onclick = () => {
+                    cartCount++;
+                    const cs = document.getElementById('cart-count');
+                    if (cs) cs.innerText = `(${cartCount})`;
+                };
+                btnGroup.append(addBtn);
             }
+
+            card.append(imgBox, content, btnGroup);
+            container.appendChild(card);
         });
-    } catch (err) {
-        console.error("Market error:", err);
-    }
+    } catch (err) { console.error("Error loading items:", err); }
 }
 
 async function deleteDish(id, name) {
     if (confirm(`Delete ${name}?`)) {
-        try {
-            await deleteDoc(doc(database, "pending_food", id));
-            location.reload();
-        } catch (e) { alert("Delete failed"); }
+        await deleteDoc(doc(database, "pending_food", id));
+        location.reload();
     }
 }
 
-document.getElementById('theme-toggle')?.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    const icon = document.getElementById('theme-icon');
-    icon.innerText = document.body.classList.contains('dark-mode') ? "🌙" : "☀️";
-});
-
-document.getElementById('logout-btn')?.addEventListener('click', () => {
-    signOut(auth).then(() => location.href = "index.html");
-});
+const logoutBtn = document.getElementById('logout-btn');
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+        signOut(auth).then(() => {
+            window.location.href = "index.html";
+        });
+    });
+}
