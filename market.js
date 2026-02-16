@@ -5,7 +5,7 @@ import { doc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic
 let currentUserEmail = null;
 let cartCount = 0;
 
-// THEME TOGGLE LOGIC ONLY
+
 document.addEventListener('DOMContentLoaded', () => {
     const themeToggle = document.getElementById('theme-toggle');
     const themeIcon = document.getElementById('theme-icon');
