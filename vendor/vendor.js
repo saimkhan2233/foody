@@ -2,8 +2,8 @@ import { database, auth } from "../Config/config.js";
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-const CLOUD_NAME = "YOUR_CLOUD_NAME"; 
-const UPLOAD_PRESET = "YOUR_PRESET"; 
+const CLOUD_NAME = "dhqpjv2gw"; 
+const UPLOAD_PRESET = "food-application"; 
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
 
 const themeBtn = document.getElementById('theme-toggle');
