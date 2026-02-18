@@ -2,8 +2,8 @@ import { database, auth } from "../Config/config.js";
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-const CLOUD_NAME = "dhqpjv2gw"; 
-const UPLOAD_PRESET = "food-application"; 
+const CLOUD_NAME = "dhqpjv2gw";
+const UPLOAD_PRESET = "food-application";
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
 
 const themeBtn = document.getElementById('theme-toggle');
@@ -23,15 +23,13 @@ onAuthStateChanged(auth, (user) => {
 logoutBtn?.addEventListener('click', () => {
     signOut(auth).then(() => {
         window.location.href = "../index.html";
+    }).catch((error) => {
+        console.error("Logout error:", error);
     });
 });
 
 themeBtn?.addEventListener('click', () => {
     document.body.classList.toggle('dark-mode');
-    const icon = document.getElementById('theme-icon');
-    if (icon) {
-        icon.textContent = document.body.classList.contains('dark-mode') ? '🌙' : '☀️';
-    }
     localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
 });
 
@@ -48,14 +46,16 @@ const updatePreview = () => {
     document.getElementById('prev-name').innerText = nameInput?.value || "Dish Name";
     document.getElementById('prev-price').innerText = priceInput?.value || "0.00";
     document.getElementById('prev-desc').innerText = descInput?.value || "Description...";
-    document.getElementById('prev-cat').innerText = catInput?.value || "Fast Food";
+    document.getElementById('prev-cat').innerText = catInput?.value || "Category";
 };
 
-['food-name', 'food-price', 'food-desc', 'food-cat'].forEach(id => {
-    const element = document.getElementById(id);
-    if (element) {
-        element.addEventListener('input', updatePreview);
-    }
+document.getElementById('food-name')?.addEventListener('input', updatePreview);
+document.getElementById('food-price')?.addEventListener('input', updatePreview);
+document.getElementById('food-desc')?.addEventListener('input', updatePreview);
+document.getElementById('food-cat')?.addEventListener('change', updatePreview);
+
+fileInput?.addEventListener('click', function(e) {
+    e.stopPropagation();
 });
 
 fileInput?.addEventListener('change', async function(e) {
@@ -63,14 +63,11 @@ fileInput?.addEventListener('change', async function(e) {
     if (!file) return;
 
     if (prevImg) {
-        if (prevImg.src && prevImg.src.startsWith('blob:')) {
-            URL.revokeObjectURL(prevImg.src);
-        }
         prevImg.src = URL.createObjectURL(file);
     }
 
     try {
-        await Swal.fire({
+        Swal.fire({
             title: 'Uploading...',
             didOpen: () => Swal.showLoading(),
             allowOutsideClick: false
@@ -80,9 +77,9 @@ fileInput?.addEventListener('change', async function(e) {
         formData.append('file', file);
         formData.append('upload_preset', UPLOAD_PRESET);
 
-        const res = await fetch(CLOUDINARY_URL, { 
-            method: 'POST', 
-            body: formData 
+        const res = await fetch(CLOUDINARY_URL, {
+            method: 'POST',
+            body: formData
         });
         
         if (!res.ok) {
@@ -95,14 +92,16 @@ fileInput?.addEventListener('change', async function(e) {
             finalImgUrl.value = data.secure_url;
         }
         
+        Swal.close();
         Swal.fire({
             icon: 'success',
-            title: 'Success!',
+            title: 'Success',
             text: 'Image uploaded successfully',
             timer: 1500,
             showConfirmButton: false
         });
     } catch (err) {
+        Swal.close();
         Swal.fire({
             icon: 'error',
             title: 'Error',
@@ -114,18 +113,13 @@ fileInput?.addEventListener('change', async function(e) {
 foodForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    const nameInput = document.getElementById('food-name');
-    const priceInput = document.getElementById('food-price');
-    const descInput = document.getElementById('food-desc');
-    const catInput = document.getElementById('food-cat');
-    
-    const name = nameInput?.value.trim();
-    const price = priceInput?.value;
-    const description = descInput?.value.trim();
-    const category = catInput?.value;
+    const name = document.getElementById('food-name')?.value;
+    const price = document.getElementById('food-price')?.value;
+    const description = document.getElementById('food-desc')?.value;
+    const category = document.getElementById('food-cat')?.value;
     const imageUrl = finalImgUrl?.value;
     
-    if (!name) {
+    if (!name || name.trim() === '') {
         return Swal.fire({
             icon: 'warning',
             title: 'Missing Information',
@@ -141,7 +135,7 @@ foodForm?.addEventListener('submit', async (e) => {
         });
     }
     
-    if (!description) {
+    if (!description || description.trim() === '') {
         return Swal.fire({
             icon: 'warning',
             title: 'Missing Information',
@@ -149,7 +143,15 @@ foodForm?.addEventListener('submit', async (e) => {
         });
     }
     
-    if (!imageUrl) {
+    if (!category || category === '') {
+        return Swal.fire({
+            icon: 'warning',
+            title: 'Missing Information',
+            text: 'Please select a category'
+        });
+    }
+    
+    if (!imageUrl || imageUrl.trim() === '') {
         return Swal.fire({
             icon: 'warning',
             title: 'Image Required',
@@ -171,10 +173,10 @@ foodForm?.addEventListener('submit', async (e) => {
     }
     
     const dishData = {
-        name: name,
+        name: name.trim(),
         price: parseFloat(price),
-        description: description,
-        category: category || "Fast Food",
+        description: description.trim(),
+        category: category,
         image: imageUrl,
         vendorEmail: auth.currentUser.email,
         vendorId: auth.currentUser.uid,
@@ -190,23 +192,29 @@ foodForm?.addEventListener('submit', async (e) => {
             icon: 'success',
             title: 'Success!',
             text: 'Your dish has been submitted for approval!',
-            timer: 2000,
+            timer: 1500,
             showConfirmButton: false
         });
         
         foodForm.reset();
+        
         if (prevImg) {
             prevImg.src = "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=1000&auto=format&fit=crop";
         }
+        
         if (finalImgUrl) {
             finalImgUrl.value = "";
         }
         
         updatePreview();
         
-        window.location.href = "my-submissions.html";
+        setTimeout(() => {
+            window.location.href = "vendor-dashboard.html";
+        }, 1500);
         
     } catch (err) {
+        console.error("Submission error:", err);
+        
         if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Submit for Verification';
@@ -221,3 +229,10 @@ foodForm?.addEventListener('submit', async (e) => {
 });
 
 updatePreview();
+
+const uploadContainer = document.querySelector('.upload-container');
+if (uploadContainer) {
+    uploadContainer.addEventListener('click', function() {
+        fileInput?.click();
+    });
+}
