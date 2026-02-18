@@ -13,10 +13,13 @@ const fileInput = document.getElementById('food-file');
 const finalImgUrl = document.getElementById('final-img-url');
 const prevImg = document.getElementById('prev-img');
 const submitBtn = document.getElementById('submit-btn');
+const uploadContainer = document.getElementById('upload-container');
+
 const nameInput = document.getElementById('food-name');
 const priceInput = document.getElementById('food-price');
 const descInput = document.getElementById('food-desc');
 const catInput = document.getElementById('food-cat');
+
 const prevName = document.getElementById('prev-name');
 const prevPrice = document.getElementById('prev-price');
 const prevDesc = document.getElementById('prev-desc');
@@ -25,12 +28,16 @@ const prevCat = document.getElementById('prev-cat');
 onAuthStateChanged(auth, (user) => {
     if (!user) {
         window.location.href = "../Login/login.html";
+    } else {
+        console.log("Logged in as:", user.email);
     }
 });
 
 logoutBtn?.addEventListener('click', () => {
     signOut(auth).then(() => {
         window.location.href = "../index.html";
+    }).catch((error) => {
+        console.error("Logout error:", error);
     });
 });
 
@@ -55,7 +62,6 @@ if (priceInput) priceInput.addEventListener('input', updatePreview);
 if (descInput) descInput.addEventListener('input', updatePreview);
 if (catInput) catInput.addEventListener('change', updatePreview);
 
-const uploadContainer = document.querySelector('.upload-container');
 if (uploadContainer) {
     uploadContainer.addEventListener('click', function() {
         fileInput.click();
@@ -75,7 +81,7 @@ fileInput?.addEventListener('change', async function(e) {
     reader.readAsDataURL(file);
 
     try {
-        Swal.fire({
+        await Swal.fire({
             title: 'Uploading...',
             didOpen: () => Swal.showLoading(),
             allowOutsideClick: false
@@ -90,10 +96,13 @@ fileInput?.addEventListener('change', async function(e) {
             body: formData
         });
         
+        if (!res.ok) throw new Error('Upload failed');
+        
         const data = await res.json();
         
         if (finalImgUrl) {
             finalImgUrl.value = data.secure_url;
+            console.log("Image URL:", data.secure_url);
         }
         
         Swal.close();
@@ -122,6 +131,8 @@ foodForm?.addEventListener('submit', async (e) => {
     const description = descInput?.value;
     const category = catInput?.value;
     const imageUrl = finalImgUrl?.value;
+    
+    console.log("Form values:", {name, price, description, category, imageUrl});
     
     if (!name || name.trim() === '') {
         return Swal.fire({
@@ -190,7 +201,8 @@ foodForm?.addEventListener('submit', async (e) => {
     };
 
     try {
-        await addDoc(collection(database, "pending_food"), dishData);
+        const docRef = await addDoc(collection(database, "pending_food"), dishData);
+        console.log("Document written with ID:", docRef.id);
         
         await Swal.fire({
             icon: 'success',
@@ -217,6 +229,8 @@ foodForm?.addEventListener('submit', async (e) => {
         }, 1500);
         
     } catch (err) {
+        console.error("Submission error:", err);
+        
         if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Submit for Verification';
