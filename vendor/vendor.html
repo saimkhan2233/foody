@@ -16,7 +16,7 @@
             <div class="nav-right">
                 <a href="admin.html" class="admin-link-btn">Verification Queue</a>
                 <button id="theme-toggle" class="theme-btn">🌙 Dark Mode</button>
-               <a href="Login/login.html"><button id="logout-btn" class="logout-btn">Logout</button></a>
+                <button id="logout-btn" class="logout-btn">Logout</button>
             </div>
         </div>
     </nav>
@@ -54,7 +54,8 @@
                     </div>
                     <div class="input-section">
                         <label>Category</label>
-                        <select id="food-cat">
+                        <select id="food-cat" required>
+                            <option value="">Select Category</option>
                             <option value="Fast Food">Fast Food</option>
                             <option value="Main Course">Main Course</option>
                             <option value="Desserts">Desserts</option>
@@ -65,7 +66,7 @@
 
                 <div class="input-section">
                     <label>Detailed Description</label>
-                    <textarea id="food-desc" rows="3" placeholder="Describe the taste..."></textarea>
+                    <textarea id="food-desc" rows="3" placeholder="Describe the taste..." required></textarea>
                 </div>
 
                 <button type="submit" class="primary-btn" id="submit-btn">Submit for Verification</button>
@@ -81,12 +82,12 @@
                         <img id="prev-img" src="https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=1000&auto=format&fit=crop" alt="Food Preview">
                     </div>
                     <div class="card-body">
-                        <div class="card-header" style="padding: 0 20px;">
+                        <div class="card-header">
                             <h2 id="prev-name">Dish Name</h2>
                             <span class="card-price">$<span id="prev-price">0.00</span></span>
                         </div>
-                        <p id="prev-desc" style="padding: 0 20px;">Description will appear here...</p>
-                        <div class="card-footer" style="padding: 20px;">
+                        <p id="prev-desc">Description will appear here...</p>
+                        <div class="card-footer">
                             <span id="prev-cat" class="cat-tag">Category</span>
                         </div>
                     </div>
