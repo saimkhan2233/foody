@@ -15,7 +15,9 @@
             <div class="logo">FOODY</div>
             <div class="nav-right">
                 <a href="admin.html" class="admin-link-btn">Verification Queue</a>
-                <button id="theme-toggle" class="theme-btn">🌙 Dark Mode</button>
+                <button id="theme-toggle" class="theme-btn">
+                    <span id="theme-icon">🌙</span> Dark Mode
+                </button>
                 <button id="logout-btn" class="logout-btn">Logout</button>
             </div>
         </div>
@@ -36,7 +38,7 @@
 
                 <div class="input-section">
                     <label>Upload Food Image</label>
-                    <div class="upload-container" id="upload-container">
+                    <div class="upload-container">
                         <input type="file" id="food-file" accept="image/*" required>
                         <div class="upload-content">
                             <div class="icon">📸</div>
@@ -55,7 +57,6 @@
                     <div class="input-section">
                         <label>Category</label>
                         <select id="food-cat" required>
-                            <option value="">Select Category</option>
                             <option value="Fast Food">Fast Food</option>
                             <option value="Main Course">Main Course</option>
                             <option value="Desserts">Desserts</option>
@@ -66,7 +67,7 @@
 
                 <div class="input-section">
                     <label>Detailed Description</label>
-                    <textarea id="food-desc" rows="3" placeholder="Describe the taste..." required></textarea>
+                    <textarea id="food-desc" rows="3" placeholder="Describe the taste..."></textarea>
                 </div>
 
                 <button type="submit" class="primary-btn" id="submit-btn">Submit for Verification</button>
@@ -88,7 +89,7 @@
                         </div>
                         <p id="prev-desc">Description will appear here...</p>
                         <div class="card-footer">
-                            <span id="prev-cat" class="cat-tag">Category</span>
+                            <span id="prev-cat" class="cat-tag">Fast Food</span>
                         </div>
                     </div>
                 </div>
