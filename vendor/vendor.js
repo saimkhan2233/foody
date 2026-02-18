@@ -12,13 +12,18 @@ const foodForm = document.getElementById('food-form');
 const fileInput = document.getElementById('food-file');
 const finalImgUrl = document.getElementById('final-img-url');
 const prevImg = document.getElementById('prev-img');
+const submitBtn = document.getElementById('submit-btn');
 
 onAuthStateChanged(auth, (user) => {
-    if (!user) window.location.href = "../Login/login.html";
+    if (!user) {
+        window.location.href = "../Login/login.html";
+    }
 });
 
 logoutBtn?.addEventListener('click', () => {
-    signOut(auth).then(() => window.location.href = "../index.html");
+    signOut(auth).then(() => {
+        window.location.href = "../index.html";
+    });
 });
 
 themeBtn?.addEventListener('click', () => {
@@ -27,72 +32,192 @@ themeBtn?.addEventListener('click', () => {
     if (icon) {
         icon.textContent = document.body.classList.contains('dark-mode') ? '🌙' : '☀️';
     }
+    localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
 });
 
+if (localStorage.getItem('darkMode') === 'true') {
+    document.body.classList.add('dark-mode');
+}
+
 const updatePreview = () => {
-    document.getElementById('prev-name').innerText = document.getElementById('food-name').value || "Dish Name";
-    document.getElementById('prev-price').innerText = document.getElementById('food-price').value || "0.00";
-    document.getElementById('prev-desc').innerText = document.getElementById('food-desc').value || "Description...";
-    document.getElementById('prev-cat').innerText = document.getElementById('food-cat').value;
+    const nameInput = document.getElementById('food-name');
+    const priceInput = document.getElementById('food-price');
+    const descInput = document.getElementById('food-desc');
+    const catInput = document.getElementById('food-cat');
+    
+    document.getElementById('prev-name').innerText = nameInput?.value || "Dish Name";
+    document.getElementById('prev-price').innerText = priceInput?.value || "0.00";
+    document.getElementById('prev-desc').innerText = descInput?.value || "Description...";
+    document.getElementById('prev-cat').innerText = catInput?.value || "Fast Food";
 };
 
 ['food-name', 'food-price', 'food-desc', 'food-cat'].forEach(id => {
-    document.getElementById(id)?.addEventListener('input', updatePreview);
+    const element = document.getElementById(id);
+    if (element) {
+        element.addEventListener('input', updatePreview);
+    }
 });
 
-
-
-fileInput?.addEventListener('change', async function() {
-    const file = this.files[0];
+fileInput?.addEventListener('change', async function(e) {
+    const file = e.target.files[0];
     if (!file) return;
 
-    prevImg.src = URL.createObjectURL(file);
+    if (prevImg) {
+        if (prevImg.src && prevImg.src.startsWith('blob:')) {
+            URL.revokeObjectURL(prevImg.src);
+        }
+        prevImg.src = URL.createObjectURL(file);
+    }
 
     try {
-        Swal.fire({ 
-            title: 'Uploading...', 
-            didOpen: () => Swal.showLoading() 
+        await Swal.fire({
+            title: 'Uploading...',
+            didOpen: () => Swal.showLoading(),
+            allowOutsideClick: false
         });
 
         const formData = new FormData();
         formData.append('file', file);
         formData.append('upload_preset', UPLOAD_PRESET);
 
-        const res = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
+        const res = await fetch(CLOUDINARY_URL, { 
+            method: 'POST', 
+            body: formData 
+        });
+        
+        if (!res.ok) {
+            throw new Error('Upload failed');
+        }
+        
         const data = await res.json();
         
-        finalImgUrl.value = data.secure_url;
-        Swal.fire("Success", "Image Ready!", "success");
+        if (finalImgUrl) {
+            finalImgUrl.value = data.secure_url;
+        }
+        
+        Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: 'Image uploaded successfully',
+            timer: 1500,
+            showConfirmButton: false
+        });
     } catch (err) {
-        Swal.fire("Error", "Upload failed", "error");
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Upload failed. Please try again.'
+        });
     }
 });
 
 foodForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    if (!finalImgUrl.value) {
-        return Swal.fire("Wait", "Upload an image first", "warning");
+    const nameInput = document.getElementById('food-name');
+    const priceInput = document.getElementById('food-price');
+    const descInput = document.getElementById('food-desc');
+    const catInput = document.getElementById('food-cat');
+    
+    const name = nameInput?.value.trim();
+    const price = priceInput?.value;
+    const description = descInput?.value.trim();
+    const category = catInput?.value;
+    const imageUrl = finalImgUrl?.value;
+    
+    if (!name) {
+        return Swal.fire({
+            icon: 'warning',
+            title: 'Missing Information',
+            text: 'Please enter a dish name'
+        });
     }
-
+    
+    if (!price || price <= 0) {
+        return Swal.fire({
+            icon: 'warning',
+            title: 'Invalid Price',
+            text: 'Please enter a valid price greater than 0'
+        });
+    }
+    
+    if (!description) {
+        return Swal.fire({
+            icon: 'warning',
+            title: 'Missing Information',
+            text: 'Please enter a description'
+        });
+    }
+    
+    if (!imageUrl) {
+        return Swal.fire({
+            icon: 'warning',
+            title: 'Image Required',
+            text: 'Please upload an image first'
+        });
+    }
+    
+    if (!auth.currentUser) {
+        return Swal.fire({
+            icon: 'error',
+            title: 'Not Authenticated',
+            text: 'Please login again'
+        });
+    }
+    
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+    }
+    
     const dishData = {
-        name: document.getElementById('food-name').value,
-        price: document.getElementById('food-price').value,
-        description: document.getElementById('food-desc').value,
-        category: document.getElementById('food-cat').value,
-        image: finalImgUrl.value,
-        vendorEmail: auth.currentUser?.email || "Unknown",
+        name: name,
+        price: parseFloat(price),
+        description: description,
+        category: category || "Fast Food",
+        image: imageUrl,
+        vendorEmail: auth.currentUser.email,
+        vendorId: auth.currentUser.uid,
         status: "pending",
-        timestamp: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        timestamp: new Date().getTime()
     };
 
     try {
         await addDoc(collection(database, "pending_food"), dishData);
-        Swal.fire("Success", "Dish submitted for approval!", "success");
+        
+        await Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: 'Your dish has been submitted for approval!',
+            timer: 2000,
+            showConfirmButton: false
+        });
+        
         foodForm.reset();
-        prevImg.src = "https://via.placeholder.com/400x300";
-        finalImgUrl.value = "";
+        if (prevImg) {
+            prevImg.src = "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=1000&auto=format&fit=crop";
+        }
+        if (finalImgUrl) {
+            finalImgUrl.value = "";
+        }
+        
+        updatePreview();
+        
+        window.location.href = "my-submissions.html";
+        
     } catch (err) {
-        Swal.fire("Error", "Submission failed", "error");
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit for Verification';
+        }
+        
+        Swal.fire({
+            icon: 'error',
+            title: 'Submission Failed',
+            text: err.message || 'Something went wrong. Please try again.'
+        });
     }
 });
+
+updatePreview();
